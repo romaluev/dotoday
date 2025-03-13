@@ -239,7 +239,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/tasks/search?q={{query}}",
+							"raw": "{{base_url}}/tasks/search?q={{query}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -265,17 +265,12 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:8000",
+			"value": "http://localhost:8080",
 			"type": "string"
 		},
 		{
 			"key": "token",
 			"value": "your_access_token_here",
-			"type": "string"
-		},
-		{
-			"key": "task_id",
-			"value": "1",
 			"type": "string"
 		},
 		{
