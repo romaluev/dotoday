@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: dotoday-api
+    container_name: dotoday-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-dotoday}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - MEILISEARCH_HOST=http://meilisearch:7700
+    depends_on:
+      - db
+      - meilisearch
+    networks:
+      - dotoday
+
+  db:
+    image: postgres:15
+    container_name: dotoday-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-dotoday}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    networks:
+      - dotoday
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.3
+    container_name: dotoday-meilisearch
+    restart: unless-stopped
+    environment:
+      - MEILI_MASTER_KEY=${MEILISEARCH_KEY:-masterKey}
+    volumes:
+      - meili_data:/meili_data
+    ports:
+      - "7700:7700"
+    networks:
+      - dotoday
+
+networks:
+  dotoday:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
+  meili_data:
+    driver: local
